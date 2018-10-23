@@ -22,6 +22,8 @@ extension WeakProxyProtocol {
 
 // MARK: - NSObject 遵守弱代理协议 实现方法
 extension NSObject: WeakProxyProtocol {
+    
+    /// 记得具体类要实现具体方法的时候 重新这个方法
     @objc
     func sourceFunction() {
         print("NSObject Extension sourceFunction")
