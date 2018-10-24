@@ -68,13 +68,13 @@ class NextController: UIViewController {
         /*
          1.这样创建 timer 会导致内存泄露
          2.这个不是循环引用 控制器没有持有 timer
-         解释：scheduled 被 rouLoop 持有，所以不会释放 runLoop 持有 timer ，timer 持有 控制器（self） 导致无法释放
+         解释：timer 被 rouLoop 持有，所以不会释放 runLoop 持有 timer ，timer 持有 控制器（self） 导致无法释放
          循环引用会导致内存泄漏，强应用也会导致内存泄漏，timer 就是强引用导致的内存泄漏
+         类方法和构造器方法都会导致循环引用
+         timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timerWork), userInfo: nil, repeats: true)
          */
         
-        
         timer = Timer(timeInterval: 2, target: self, selector: #selector(timerWork), userInfo: nil, repeats: true)
-        //timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timerWork), userInfo: nil, repeats: true)
         guard let timer = timer else { return }
         RunLoop.main.add(timer, forMode: RunLoop.Mode.common)
         isInitTimer = true
@@ -123,7 +123,7 @@ class NextController: UIViewController {
     /// 定时器的工作方法
     @objc
     private func timerWork() {
-        var message = ""
+        let message: String
         switch tag {
         case 1000:
             message = "一般Timer方法"
@@ -136,7 +136,7 @@ class NextController: UIViewController {
         case 1004:
             message = "Proxy Timer方法"
         default:
-            break
+            message = ""
         }
         print("定时器正在工作!!! \(message)")
     }
@@ -169,7 +169,6 @@ extension NextController {
             removeTimer()
         }
     }
-    
     
     override func didMove(toParent parent: UIViewController?) {
         if parent == nil && isNormalTimerFunction && isInitTimer {
